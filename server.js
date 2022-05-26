@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const myDB = require('./connection');
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
-const session = require('express-session' )
+const session = require('express-session')
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const ObjectID = require('mongodb').ObjectID;
@@ -25,7 +25,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: true,
   saveUninitialized: true,
-  cookie:{ secure: false }
+  cookie: { secure: false }
 }));
 
 app.use(passport.initialize());
@@ -35,25 +35,25 @@ myDB(async client => {
   const myDataBase = await client.db('database').collection('users');
 
   app.route('/').get((req, res) => {
-  // Change the response to render the Pug template
-  res.render('pug', {
-    title: 'Connected to Database',
-    message: 'Please login'
+    // Change the response to render the Pug template
+    res.render('pug', {
+      title: 'Connected to Database',
+      message: 'Please login'
+    });
   });
-});
 
-//Data Base with mongoDB
-//const client = new  ObjectID(THE_ID)
+  //Data Base with mongoDB
+  //const client = new  ObjectID(THE_ID)
 
-passport.serializeUser((user, done) => {
-  done(null, user._id);
-});
-
-passport.deserializeUser((id, done) => {
-  myDataBase.findOne({ _id: new ObjectID(id) }, (err, doc) => {
-    done(null,doc);
+  passport.serializeUser((user, done) => {
+    done(null, user._id);
   });
-});
+
+  passport.deserializeUser((id, done) => {
+    myDataBase.findOne({ _id: new ObjectID(id) }, (err, doc) => {
+      done(null, doc);
+    });
+  });
 
 }).catch(e => {
   app.route('/').get((req, res) => {
@@ -63,7 +63,7 @@ passport.deserializeUser((id, done) => {
 
 //res.render(process.cwd() + '/views/pug/index', {title: 'Hello', message: 'Please login'});
 
-app.listen(process.env.PORT ,() => {
+app.listen(process.env.PORT, () => {
   console.log('Listening on port ' + process.env.PORT);
 });
 
