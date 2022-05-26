@@ -14,13 +14,13 @@ app.set('view engine', 'pug');
 
 
 // Genera la vista y con urlencoded le permite a express leer los datos que vienen de un formulario
-fccTesting(app); // For fCC testing purposes
+fccTesting(app); 
 app.use('/public', express.static(process.cwd() + '/public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-
+//Levanta la session con los parametros que se le pasan
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: true,
@@ -31,6 +31,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session())
 
+//Se conecta a la base de datos con el try, si no funciona lanza un texto con el catch
 myDB(async client => {
   const myDataBase = await client.db('database').collection('users');
 
@@ -42,8 +43,6 @@ myDB(async client => {
     });
   });
 
-  //Data Base with mongoDB
-  //const client = new  ObjectID(THE_ID)
 
   passport.serializeUser((user, done) => {
     done(null, user._id);
@@ -61,7 +60,6 @@ myDB(async client => {
   });
 });
 
-//res.render(process.cwd() + '/views/pug/index', {title: 'Hello', message: 'Please login'});
 
 app.listen(process.env.PORT, () => {
   console.log('Listening on port ' + process.env.PORT);
