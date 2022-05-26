@@ -27,8 +27,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.route('/').get((req, res) => {
   // Change the response to render the Pug template
-  res.render(process.cwd() + '/views/pug');
+  res.render(process.cwd() + '/views/pug/index', {title: 'Hello', message: 'Please login'});
 });
+
+
 
 app.listen(process.env.PORT || 3000, () => {
   console.log('Listening on port ' + process.env.PORT);
