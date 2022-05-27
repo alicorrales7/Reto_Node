@@ -5,7 +5,6 @@ const myDB = require('./connection');
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
 const session = require('express-session')
 const passport = require('passport');
-const cookieParser = require('cookie-parser');
 const ObjectID = require('mongodb').ObjectID;
 const LocalStrategy = require('passport-local').Strategy;
 
@@ -55,10 +54,27 @@ myDB(async client => {
     // Change the response to render the Pug template
     res.render('pug', {
       title: 'Connected to Database',
-      message: 'Please login'
+      message: 'Please login',
+      showLogin:true
+      //showRegistration:true
     });
   });
 
+  //Levanta la tura Post login , con el  passport.authenticate(local,) definimos la esrategia a usar con el middleware.
+  // FailuerRedirect define qeu si algo sale mal entonces me lleva a la ruta "/"
+  //La function representa la ruta satisfactoria
+  app.route('/login').post(passport.authenticate('local', { failureRedirect: '/' }), (req, res) => {
+    res.redirect('/profile');
+  });
+
+  app.route('/profile').get((req, res) => {
+    res.render(process.cwd() + '/views/pug/profile');
+  });
+
+  app.route('/chat').get((req, res) => {
+    res.render(process.cwd() + '/views/pug/chat');
+    
+  });
 
   passport.serializeUser((user, done) => {
     done(null, user._id);
