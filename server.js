@@ -9,6 +9,14 @@ const ObjectID = require('mongodb').ObjectID;
 const LocalStrategy = require('passport-local').Strategy;
 
 
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+      return next();
+  }
+  res.redirect('/');
+};
+
+
 const app = express();
 app.set('view engine', 'pug');
 
@@ -67,9 +75,15 @@ myDB(async client => {
     res.redirect('/profile');
   });
 
-  app.route('/profile').get((req, res) => {
+  // app.route('/profile').get((req, res) => {
+  //   res.render(process.cwd() + '/views/pug/profile');
+  // });
+
+  app
+ .route('/profile')
+ .get(ensureAuthenticated, (req,res) => {
     res.render(process.cwd() + '/views/pug/profile');
-  });
+ });
 
   app.route('/chat').get((req, res) => {
     res.render(process.cwd() + '/views/pug/chat');
