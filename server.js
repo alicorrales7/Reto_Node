@@ -16,8 +16,8 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/');
 };
 
-
 const app = express();
+
 app.set('view engine', 'pug');
 
 
@@ -27,7 +27,7 @@ app.use('/public', express.static(process.cwd() + '/public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
+      
 //Levanta la session con los parametros que se le pasan
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -63,8 +63,8 @@ myDB(async client => {
     res.render('pug', {
       title: 'Connected to Database',
       message: 'Please login',
-      showLogin:true
-      //showRegistration:true
+      showLogin:true,
+      showRegistration:true
     });
   });
 
@@ -75,19 +75,18 @@ myDB(async client => {
     res.redirect('/profile');
   });
 
-  // app.route('/profile').get((req, res) => {
-  //   res.render(process.cwd() + '/views/pug/profile');
-  // });
-
+  //Si el user no esta autenticado y trata de entrar a /profile se le redirecciona al login
   app.route('/profile').get(ensureAuthenticated, (req,res) => {
     res.render(process.cwd() + '/views/pug/profile', { username: req.user.username });
  });
 
+ //Ruta para cerrar la session de un user
  app.route('/logout').get((req, res) => {
     req.logout();
     res.redirect('/');
 });
 
+//Respuesta para cuando requeire 
 app.use((req, res, next) => {
   res.status(404).type('text').send('Not Found');
 });
