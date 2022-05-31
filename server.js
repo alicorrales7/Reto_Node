@@ -7,7 +7,7 @@ const session = require('express-session')
 const passport = require('passport');
 const ObjectID = require('mongodb').ObjectID;
 const LocalStrategy = require('passport-local').Strategy;
-
+const bcrypt = require('bcrypt');
 //Middleware Para verificar si esta autenticado
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
@@ -100,7 +100,8 @@ app.use((req, res, next) => {
   //se define la ruta de registro de un usuario, en caso de no existir ningun error
   // redireccionamos a la ruta de Login sino se redirecciona a ruta principal.
   //En el siguinte tiket vamos a cambiar la seguridad asignando una clave hash a nuestro
-  //req.body.password.
+  //req.body.password, ademas se comparan la contrasena entrada con las del User detro de la
+  //funcion passport.strategy.
   
   app.route('/register')
   .post((req, res, next) => {
@@ -130,11 +131,16 @@ app.use((req, res, next) => {
   },
     passport.authenticate('local', { failureRedirect: '/' }),
     (req, res, next) => {
+      
+      if (!bcrypt.compareSync(password, user.password)) { 
+        return done(null, false);
+      }
+      else{
       res.redirect('/profile');
+      }
     }
   );
   
-
   passport.serializeUser((user, done) => {
     done(null, user._id);
   });
