@@ -7,7 +7,7 @@ const session = require('express-session')
 const passport = require('passport');
 const ObjectID = require('mongodb').ObjectID;
 const LocalStrategy = require('passport-local').Strategy;
-
+const bcrypt = require('bcrypt');
 //Middleware Para verificar si esta autenticado
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
@@ -45,14 +45,15 @@ app.use(passport.session())
 myDB(async client => {
   const myDataBase = await client.db('database').collection('users');
 
-  //Toma los valores username y password  dentro de una funcion y la funsion done 
+  //Toma los valores username y password  dentro de una funcion y la funsion done
+  // cambia el 3er if, ahora aseguramos que la comparacion sea entra contrasenas cifradas.
   passport.use(new LocalStrategy(function (username, password, done) {
       
     myDataBase.findOne({ username: username }, function (err, user) {
       console.log('User ' + username + ' attempted to log in.');
       if (err) { return done(err); }
       if (!user) { return done(null, false); }
-      if (password !== user.password) { return done(null, false); }
+      if (!bcrypt.compareSync(password,user.password)) { return done(null, false); }
       return done(null, user);
     });
 
@@ -129,11 +130,12 @@ app.use((req, res, next) => {
   },
     passport.authenticate('local', { failureRedirect: '/' }),
     (req, res, next) => {
+      
       res.redirect('/profile');
-    }
+      }
+    
   );
   
-
   passport.serializeUser((user, done) => {
     done(null, user._id);
   });
