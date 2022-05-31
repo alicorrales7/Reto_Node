@@ -8,6 +8,10 @@ const passport = require('passport');
 const ObjectID = require('mongodb').ObjectID;
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
+const routes = require('./routes.js');
+
+
+
 //Middleware Para verificar si esta autenticado
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
@@ -44,6 +48,10 @@ app.use(passport.session())
 //Se conecta a la base de datos con el try, si no funciona lanza un texto con el catch
 myDB(async client => {
   const myDataBase = await client.db('database').collection('users');
+
+  
+
+
 
   //Toma los valores username y password  dentro de una funcion y la funsion done
   // cambia el 3er if, ahora aseguramos que la comparacion sea entra contrasenas cifradas.
