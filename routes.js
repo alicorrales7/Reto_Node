@@ -8,7 +8,8 @@ module.exports = function (app, myDataBase) {
       title: 'Connected to Database',
       message: 'Please login',
       showLogin:true,
-      showRegistration:true
+      showRegistration:true,
+      showSocialAuth: true
     });
   });
   //Levanta la tura Post login , con el  passport.authenticate(local,) definimos la esrategia a usar con el middleware.
@@ -29,9 +30,7 @@ module.exports = function (app, myDataBase) {
     res.redirect('/');
 });
 
-
-
-  app.route('/chat').get((req, res) => {
+app.route('/chat').get((req, res) => {
     res.render(process.cwd() + '/views/pug/chat');
     
   });
@@ -74,6 +73,12 @@ module.exports = function (app, myDataBase) {
       }
     
   );
+
+  app.route('/auth/github').get(passport.authenticate('github'));
+
+  app.route('/auth/github/callback').get(passport.authenticate('github', { failureRedirect: '/' }), (req, res) => {
+    res.redirect('/profile');
+  });
 
   //Respuesta para cuando requeire 
 app.use((req, res, next) => {
