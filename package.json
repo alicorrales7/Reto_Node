@@ -24,6 +24,7 @@
     "mongodb": "3.7.3",
     "mongoose": "6.3.4",
     "passport": "^0.4.1",
+    "passport-github": "~1.1.0",
     "passport-local": "^1.0.0"
   },
   "repository": {
