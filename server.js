@@ -36,6 +36,7 @@ app.use(passport.session())
 //Se conecta a la base de datos con el try, si no funciona lanza un texto con el catch
 myDB(async client => {
   const myDataBase = await client.db('database').collection('users');
+  
   routes(app, myDataBase);
   auth(app, myDataBase);
 
