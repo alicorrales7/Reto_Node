@@ -35,7 +35,7 @@ app.use(passport.session())
 
 //Se conecta a la base de datos con el try, si no funciona lanza un texto con el catch
 myDB(async client => {
-  const myDataBase = await client.db('database').collection('users');
+  const myDataBase = await client.db('University').collection('users');
   
   routes(app, myDataBase);
   auth(app, myDataBase);
@@ -49,7 +49,7 @@ myDB(async client => {
 
 app.listen(process.env.PORT, () => {
   console.log('Listening on port ' + process.env.PORT);
-});
+}); 
 
 
 
