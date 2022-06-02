@@ -42,18 +42,20 @@ myDB(async client => {
   routes(app, myDataBase);
   auth(app, myDataBase);
 
-  let ali = 0;
+  let currentUsers = 0;
+  
   io.on('connection', (socket) => {
-    ++ali;
-    io.emit('user_count', ali);
+    ++currentUsers;
+    io.emit('user_count', currentUsers);
 
     socket.on("hello", (arg) => {
       console.log(arg); // data
     });
-
-
-
     console.log('A user has connected');
+
+    socket.on('disconnect', () => {
+      console.log("Un user was disconnect")
+    });
   });
   
 
