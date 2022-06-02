@@ -8,8 +8,10 @@ const passport = require('passport');
 const routes = require('./routes.js');
 const auth = require('./auth.js');
 
-
 const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
 app.set('view engine', 'pug');
 
 
@@ -37,9 +39,16 @@ app.use(passport.session())
 myDB(async client => {
   const myDataBase = await client.db('University').collection('users');
   
+  io.on('connection', socket => {
+    console.log('A user has connected');
+  });
+  
+
   routes(app, myDataBase);
   auth(app, myDataBase);
 
+  
+  
 }).catch(e => {
   app.route('/').get((req, res) => {
     res.render('pug', { title: e, message: 'Unable to login' });
@@ -47,7 +56,8 @@ myDB(async client => {
 });
 
 
-app.listen(process.env.PORT, () => {
+
+http.listen(process.env.PORT, () => {
   console.log('Listening on port ' + process.env.PORT);
 }); 
 

@@ -30,8 +30,8 @@ module.exports = function (app, myDataBase) {
     res.redirect('/');
 });
 
-app.route('/chat').get((req, res) => {
-    res.render(process.cwd() + '/views/pug/chat');
+app.route('/chat').get(ensureAuthenticated,(req, res) => {
+    res.render(process.cwd() + '/views/pug/chat' , {user: req.user});
     
   });
   
@@ -77,7 +77,8 @@ app.route('/chat').get((req, res) => {
   app.route('/auth/github').get(passport.authenticate('github'));
 
   app.route('/auth/github/callback').get(passport.authenticate('github', { failureRedirect: '/' }), (req, res) => {
-    res.redirect('/profile');
+    if(req.session.user_id = req.user.id){res.redirect('/chat')}
+    
   });
 
   //Respuesta para cuando requeire 
