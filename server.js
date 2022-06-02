@@ -21,7 +21,7 @@ app.use('/public', express.static(process.cwd() + '/public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-      
+
 //Levanta la session con los parametros que se le pasan
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -38,17 +38,25 @@ app.use(passport.session())
 //Se conecta a la base de datos con el try, si no funciona lanza un texto con el catch
 myDB(async client => {
   const myDataBase = await client.db('University').collection('users');
-  
-  io.on('connection', socket => {
-    console.log('A user has connected');
-  });
-  
 
   routes(app, myDataBase);
   auth(app, myDataBase);
 
+  let ali = 0;
+  io.on('connection', (socket) => {
+    ++ali;
+    io.emit('user_count', ali);
+
+    socket.on("hello", (arg) => {
+      console.log(arg); // data
+    });
+
+
+
+    console.log('A user has connected');
+  });
   
-  
+
 }).catch(e => {
   app.route('/').get((req, res) => {
     res.render('pug', { title: e, message: 'Unable to login' });
@@ -59,7 +67,7 @@ myDB(async client => {
 
 http.listen(process.env.PORT, () => {
   console.log('Listening on port ' + process.env.PORT);
-}); 
+});
 
 
 
