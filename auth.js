@@ -23,8 +23,6 @@ module.exports = function (app, myDataBase) {
         function(username, password, done) {
           myDataBase.findOne({ username: username }, function (err, user) {
             console.log('User '+ username +' attempted to log in.');
-            // /*global io*/
-            // let socket = io();
             if (err) { return done(err); }
             if (!user) { return console.log("El user is invalid"), done(null, false); }
             if ((bcrypt.compareSync(password, user.password)) !== true) { return console.log("El pwd is invalid"),done(null, false); }

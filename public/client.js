@@ -7,6 +7,8 @@ $(document).ready(function () {
     console.log(data);
 
     socket.emit("hello", data);
+
+    console.log('user ' + socket.request.user + ' connected');
   });
   
 
