@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { urlencoded } from 'express';
 import config from './util/config';
 import { connectDB } from './util/connection';
 import { userRoutes } from './routes/userRoutes';
@@ -8,6 +8,7 @@ import morgan from 'morgan';
 import { phoneRoutes } from './routes/phoneRoutes';
 export const app = express()
 app.use(morgan("dev"))
+app.use(express.urlencoded({extended:true}))
 
 connectDB();
 

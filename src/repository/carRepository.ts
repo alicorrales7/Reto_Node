@@ -1,7 +1,10 @@
+import { CannotBeSymbolError } from "@typegoose/typegoose/lib/internal/errors";
+import { Console } from "console";
+import { arrayBuffer } from "stream/consumers";
 import { Service } from "typedi";
 import { Repository } from "../interface/repository";
-import { CarModel } from "../models/Car";
-import { userModel } from "../models/User";
+import { CarModel } from "../models/car";
+import { userModel } from "../models/user";
 
 @Service()
 class CarRepository implements Repository{
@@ -38,11 +41,25 @@ class CarRepository implements Repository{
     }
 
     async delete(id: string) {
-        const convert = { "_id": id }
-        const carDelete = await CarModel.deleteMany(convert)
+        const convert = { "_id": id };
+        const car = await CarModel.findById(id);
+        
+        const userId = car?.userId;
+        const arrayC = await userModel.find({"_id":userId},{productCars:true});
+        
+        const arrayUpdate = arrayC.filter(p =>p.id == car?.id);
+        console.log(arrayUpdate);
+        const updateUser = await userModel.updateOne({"_id":userId},{$set:{productCars:arrayUpdate}});
+        const carDelete = await CarModel.deleteMany(convert);
         return carDelete;
 
     }
+        
+        
+
+        
+        
+
 }
 
 export default CarRepository;

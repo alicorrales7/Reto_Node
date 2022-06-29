@@ -1,7 +1,7 @@
 import { Service } from "typedi";
 import { Repository } from "../interface/repository";
-import { phoneModel } from "../models/Phone";
-import { userModel } from "../models/User";
+import { phoneModel } from "../models/phone";
+import { userModel } from "../models/user";
 
 @Service()
 class PhoneRepository implements Repository{
@@ -39,9 +39,18 @@ class PhoneRepository implements Repository{
     }
 
     async delete(id: string) {
-        const convert = { "_id": id }
-        const phoneDelete = await phoneModel.deleteMany(convert)
+        const convert = { "_id": id };
+        const phone = await phoneModel.findById(id);
+        const userId = phone?.userId;
+        const arrayC = await userModel.find({"_id":userId},{productCars:true});
+        const arrayUpdate = arrayC.filter(p =>p.id == phone?.id);
+        console.log(arrayUpdate);
+        
+        const updateUser = await userModel.updateOne({"_id":userId},{$set:{productCars:arrayUpdate}});
+        const phoneDelete = await phoneModel.deleteMany(convert);
         return phoneDelete;
+        
+        
 
     }
 }
